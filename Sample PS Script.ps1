@@ -1,19 +1,16 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $false)]
     [String]
-    $Message
+    $Message = "Hello"
 )
 
-if ($MyInvocation.MyCommand.Path) {
-    $ScriptCWD = (Get-Item -Path $MyInvocation.MyCommand.Path).Directory.FullName
-}
-elseif ($PSScriptRoot) {
-    $ScriptCWD = $PSScriptRoot
-}
-else {
-    throw "Cannot determine script's working directory"
-}
+# For whatever reason it wasn't changed in the batch script
+# We don't want to dirty up System32
+if ((Get-Location).Path -eq "$env:WINDIR\System32")
+{ Set-Location -Path $env:TEMP }
+
+$ScriptCWD = (Get-Location).Path
 
 Write-Output -InputObject "Script current working directory: $ScriptCWD"
 
